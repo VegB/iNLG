@@ -132,7 +132,7 @@ def convert_to_features(example_batch, tokenizer, args):
     if args.model_type in ['gpt2']:
         target_text = copy.deepcopy(example_batch['input_text'])
         if args.dataset.find('with_image') == -1:  # no visual input, add appending start-of-sentence token
-            example_batch['input_text'] = [f'{gpt2_eot} {text}' for text in example_batch['input_text']]
+            example_batch['input_text'] = [f'{gpt2_eot}{text}' for text in example_batch['input_text']]
     else:
         target_text = example_batch['target']
     input_encodings = tokenizer.batch_encode_plus(
