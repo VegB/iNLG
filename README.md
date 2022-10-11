@@ -1,5 +1,5 @@
 # iNLG
-This is the implementation code for "Visualize Before You Write: Imagination-Guided Open-Ended Text Generation".
+This is the implementation code for [Visualize Before You Write: Imagination-Guided Open-Ended Text Generation](https://arxiv.org/abs/2210.03765).
 
 ## Environment Setup
 
