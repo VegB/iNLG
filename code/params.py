@@ -13,6 +13,7 @@ LM_NAME = {
     't5-base': 't5-base',
     't5-large': 't5-large',
     'gpt2': 'gpt2',
+    'gpt2-large': 'gpt2-large',
 }
 
 LM_CLASS = {
@@ -21,6 +22,7 @@ LM_CLASS = {
     't5-base': T5ForConditionalGeneration,
     't5-large': T5ForConditionalGeneration,
     'gpt2': GPT2LMHeadModel,
+    'gpt2-large': GPT2LMHeadModel,
 }
 
 TOKENIZER_CLASS = {
@@ -29,6 +31,7 @@ TOKENIZER_CLASS = {
     't5-base': T5Tokenizer,
     't5-large': T5Tokenizer,
     'gpt2': GPT2Tokenizer,
+    'gpt2-large': GPT2Tokenizer,
 }
 
 MODEL_CLASS = {

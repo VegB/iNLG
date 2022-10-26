@@ -130,7 +130,7 @@ def _main(args):
     # EVALUATION
     if args.task in ['concept2text', 'sentence_completion', 'image_captioning', 'story_generation']:
         for phase in args.test_set_list:
-            if args.model_type == 'gpt2':
+            if args.model_type in ['gpt2', 'gpt2-large']:
                 text_evaluate_gpt2(
                     args=args,
                     model=model,

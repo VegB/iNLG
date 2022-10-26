@@ -23,7 +23,7 @@ def format_concepts_concatenation(example, model):
     For Concept2Text (CommonGen).
     Concatenate all the concepts into a string
     """
-    if model in ['gpt2']:
+    if model in ['gpt2', 'gpt2-large']:
         example['test_input_text'] = f'<|endoftext|> {", ".join(example["concepts"])}:'
         input_text = example['test_input_text'] + f' {example["target"]}' 
     else:
@@ -34,7 +34,7 @@ def format_concepts_concatenation(example, model):
 
 def format_sentence_completion_input_text(example, model):
     input_text = example['context']
-    if model in ['gpt2']:
+    if model in ['gpt2', 'gpt2-large']:
         example['test_input_text'] = example['context']
         input_text += f' {example["target"]}' 
     example['input_text'] = input_text
@@ -43,7 +43,7 @@ def format_sentence_completion_input_text(example, model):
 
 def format_image_captioning_input_text(example, model):
     input_text = ''
-    if model in ['gpt2']:
+    if model in ['gpt2', 'gpt2-large']:
         example['test_input_text'] = input_text
         input_text = f'{example["target"]}' 
     example['input_text'] = input_text
@@ -52,7 +52,7 @@ def format_image_captioning_input_text(example, model):
 
 def format_story_generation_input_text(example, model):
     input_text = f'{example["title"]}. {example["context"]}'
-    if model in ['gpt2']:
+    if model in ['gpt2', 'gpt2-large']:
         example['test_input_text'] = input_text
         input_text += f' {example["target"]}' 
     example['input_text'] = input_text
@@ -129,7 +129,7 @@ def convert_to_features(example_batch, tokenizer, args):
     """
     Use the tokenizer to encode the input str.
     """
-    if args.model_type in ['gpt2']:
+    if args.model_type in ['gpt2', 'gpt2-large']:
         target_text = copy.deepcopy(example_batch['input_text'])
         if args.dataset.find('with_image') == -1:  # no visual input, add appending start-of-sentence token
             example_batch['input_text'] = [f'{gpt2_eot}{text}' for text in example_batch['input_text']]
@@ -168,7 +168,7 @@ def encode_dataset(raw_dataset, tokenizer, args):
     """
     # remove unused columns
     ignore_columns = ['input_text']
-    if args.model_type in ['gpt2']:
+    if args.model_type in ['gpt2', 'gpt2-large']:
         ignore_columns.append('test_input_text')
     elif args.task == 'concept2text':
         ignore_columns.append('concepts')
@@ -222,7 +222,7 @@ def load_tokenizer(args, model_name):
     Load and initialize the tokenizer from the checkpoint.
     """
     tokenizer = args.tokenizer_class.from_pretrained(model_name)
-    if args.model_type == 'gpt2':
+    if args.model_type in ['gpt2', 'gpt2-large']:
         tokenizer.pad_token = tokenizer.eos_token
 
     print(f'Load Tokenizer from {model_name}')

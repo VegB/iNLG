@@ -222,7 +222,12 @@ class ClipCaptionModel(iNLGWrapper):
         self.prefix_length = self.args.visual_prefix_length
         self.clip_length = self.args.visual_prefix_clip_length
         self.transformer_layers = 8
-        self.lm_embedding_size = 768 if self.args.model_type != 'bart-large' else 1024
+        if self.args.model_type in ['bart-large', 't5-large']:
+            self.lm_embedding_size = 1024
+        elif self.args.model_type == 'gpt2-large':
+            self.lm_embedding_size = 1280
+        else:
+            self.lm_embedding_size = 768
 
         # map visual features to input embeddings
         if self.args.mapper_type == 'mlp':
@@ -233,7 +238,7 @@ class ClipCaptionModel(iNLGWrapper):
                 self.prefix_size, self.lm_embedding_size, self.prefix_length, self.clip_length, self.transformer_layers)
 
         # project lm hidden states to clip space
-        if self.args.model_type in ['gpt2']:
+        if self.args.model_type in ['gpt2', 'gpt2-large']:
             self.hidden_dim = self.config.n_embd
         else:
             self.hidden_dim = self.config.d_model
@@ -249,7 +254,7 @@ class ClipCaptionModel(iNLGWrapper):
         # Word Embedder
         if self.args.model_type in ['bart-base', 'bart-large']:
             self.embedder = self.lm.model.encoder.embed_tokens
-        elif self.args.model_type in ['gpt2']:
+        elif self.args.model_type in ['gpt2', 'gpt2-large']:
             self.embedder = self.lm.transformer.wte
         elif self.args.model_type in ['t5-base', 't5-large']:
             self.embedder = self.lm.shared
@@ -268,7 +273,7 @@ class ClipCaptionModel(iNLGWrapper):
         return concatenated_embedding
 
     def forward(self, input_ids=None, attention_mask=None, images=None, labels=None):
-        if self.args.model_type in ['gpt2']:
+        if self.args.model_type in ['gpt2', 'gpt2-large']:
             dummy_token = utils.get_dummy_token(input_ids.shape[0], self.prefix_length, input_ids.device)
             labels = torch.cat((dummy_token, labels), dim=1)
 
@@ -279,7 +284,7 @@ class ClipCaptionModel(iNLGWrapper):
             labels=labels,
             output_hidden_states=True,
         )
-        if self.args.model_type in ['gpt2']:
+        if self.args.model_type in ['gpt2', 'gpt2-large']:
             outputs.logits = outputs.logits[:, self.prefix_length-1:-1]
             decoder_hidden_states = outputs.hidden_states[0][:, self.prefix_length-1:-1]
         else:
@@ -290,7 +295,7 @@ class ClipCaptionModel(iNLGWrapper):
 
     def generate(self, input_ids=None, attention_mask=None, images=None, labels=None, 
                  num_beams=None, max_length=None, synced_gpus=None):
-        if self.args.model_type in ['gpt2']:
+        if self.args.model_type in ['gpt2', 'gpt2-large']:
             dummy_token = utils.get_dummy_token(input_ids.shape[0], self.prefix_length, input_ids.device)
             labels = torch.cat((dummy_token, labels), dim=1)
             outputs = self.lm(
