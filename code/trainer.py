@@ -131,8 +131,8 @@ class CLIPCapTrainer(SelfTrainer):
     def prediction_step(self, model, inputs, prediction_loss_only=False, ignore_keys=None):
         inputs = self._prepare_inputs(inputs)
         gen_kwargs = {
-            "max_length": self._max_length if self._max_length is not None else self.model.config.max_length,
-            "num_beams": self._num_beams if self._num_beams is not None else self.model.config.num_beams,
+            "max_length": self._max_length if self._max_length is not None else self.additional_args.max_output_length,
+            "num_beams": self._num_beams if self._num_beams is not None else self.additional_args.num_beams,
         }
         generated_tokens = model.generate(**inputs, **gen_kwargs)
         if generated_tokens.shape[-1] < gen_kwargs["max_length"]:
